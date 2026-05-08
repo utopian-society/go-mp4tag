@@ -325,6 +325,13 @@ func putI32BE(n int32) []byte {
 	return buf
 }
 
+
+func putI64BE(n int64) []byte {
+	buf := make([]byte, 8)
+	binary.BigEndian.PutUint64(buf, uint64(n))
+	return buf
+}
+
 func (mp4 MP4) updateChunkOffsets(outF *os.File, boxes MP4Boxes, oldIlistSize, newIlistSize int64) error {
 	stco := boxes.getBoxByPath("moov.trak.mdia.minf.stbl.stco")
 	_, err := mp4.f.Seek(stco.StartOffset+12, io.SeekStart)
@@ -567,8 +574,8 @@ func writeAdvisory(f *os.File, advisory ItunesAdvisory) error {
 	return err
 }
 
-func writeItunesAlbumID(f *os.File, albumID int32) error {
-	_, err := f.Write([]byte{0x0, 0x0, 0x0, 0x20})
+func writeItunesAlbumID(f *os.File, albumID int64) error {
+	_, err := f.Write([]byte{0x0, 0x0, 0x0, 0x24})
 	if err != nil {
 		return err
 	}	
@@ -576,7 +583,7 @@ func writeItunesAlbumID(f *os.File, albumID int32) error {
 	if err != nil {
 		return err
 	}
-	_, err = f.Write([]byte{0x0, 0x0, 0x0, 0x18})
+	_, err = f.Write([]byte{0x0, 0x0, 0x0, 0x20})
 	if err != nil {
 		return err
 	}
@@ -589,13 +596,13 @@ func writeItunesAlbumID(f *os.File, albumID int32) error {
 	if err != nil {
 		return err
 	}
-	albumIDBytes := putI32BE(albumID)
+	albumIDBytes := putI64BE(albumID)
 	_, err = f.Write(albumIDBytes)
 	return err
 }
 
-func writeItunesArtistID(f *os.File, artistID int32) error {
-	_, err := f.Write([]byte{0x0, 0x0, 0x0, 0x1C})
+func writeItunesArtistID(f *os.File, artistID int64) error {
+	_, err := f.Write([]byte{0x0, 0x0, 0x0, 0x20})
 	if err != nil {
 		return err
 	}	
@@ -603,7 +610,7 @@ func writeItunesArtistID(f *os.File, artistID int32) error {
 	if err != nil {
 		return err
 	}
-	_, err = f.Write([]byte{0x0, 0x0, 0x0, 0x14})
+	_, err = f.Write([]byte{0x0, 0x0, 0x0, 0x18})
 	if err != nil {
 		return err
 	}
@@ -616,7 +623,7 @@ func writeItunesArtistID(f *os.File, artistID int32) error {
 	if err != nil {
 		return err
 	}
-	artistIDBytes := putI32BE(artistID)
+	artistIDBytes := putI64BE(artistID)
 	_, err = f.Write(artistIDBytes)
 	return err
 }
