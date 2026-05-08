@@ -69,6 +69,17 @@ func (mp4 MP4) readI32BE() (int32, error) {
 	return int32(num), nil
 }
 
+
+func (mp4 MP4) readI64BE() (int64, error) {
+	buf := make([]byte, 8)
+	_, err := io.ReadFull(mp4.f, buf)
+	if err != nil {
+		return -1, err
+	}
+	num := binary.BigEndian.Uint64(buf)
+	return int64(num), nil
+}
+
 func (mp4 MP4) readBoxes(boxes MP4Boxes, parentEndsAt, level int64, p string) (MP4Boxes, error) {
 	empty := MP4Boxes{}
 	pos, err := getPos(mp4.f)
@@ -311,7 +322,7 @@ func (mp4 MP4) readCustom(boxes MP4Boxes) (map[string]string, map[string][]strin
 	return custom, others, nil
 }
 
-func (mp4 MP4) readITAlbumID(boxes MP4Boxes) (int32, error) {
+func (mp4 MP4) readITAlbumID(boxes MP4Boxes) (int64, error) {
 	box := boxes.getBoxByPath("moov.udta.meta.ilst.plID.data")
 	if box == nil {
 		return -1, nil
@@ -320,11 +331,11 @@ func (mp4 MP4) readITAlbumID(boxes MP4Boxes) (int32, error) {
 	if err != nil {
 		return -1, err
 	}
-	id, err := mp4.readI32BE()
+	id, err := mp4.readI64BE()
 	return id, err
 }
 
-func (mp4 MP4) readITArtistID(boxes MP4Boxes) (int32, error) {
+func (mp4 MP4) readITArtistID(boxes MP4Boxes) (int64, error) {
 	box := boxes.getBoxByPath("moov.udta.meta.ilst.atID.data")
 	if box == nil {
 		return -1, nil
@@ -333,7 +344,7 @@ func (mp4 MP4) readITArtistID(boxes MP4Boxes) (int32, error) {
 	if err != nil {
 		return -1, err
 	}
-	id, err := mp4.readI32BE()
+	id, err := mp4.readI64BE()
 	return id, err
 }
 
