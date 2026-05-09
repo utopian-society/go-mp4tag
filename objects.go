@@ -294,8 +294,8 @@ type MP4Tags struct {
 	DiscTotal int16
 	Genre Genre
 	ItunesAdvisory ItunesAdvisory
-	ItunesAlbumID int64
-	ItunesArtistID int64
+	ItunesAlbumID int32
+	ItunesArtistID int32
 	Lyrics string
 	Narrator string
 	OtherCustom map[string][]string
